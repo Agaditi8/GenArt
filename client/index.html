@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenArt | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ededed; }
+        .nav-active { color: #6366f1; background: rgba(99, 102, 241, 0.1); }
+        .card-bg { background: #141414; border: 1px solid #262626; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="border-b border-neutral-800 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <span onclick="showView('landing')" class="font-bold text-white tracking-tighter text-lg cursor-pointer">GENART</span>
+                <div class="flex gap-1 text-sm font-medium">
+                    <button onclick="showView('explore')" id="nav-explore" class="px-4 py-2 rounded-lg hover:text-white transition">Explore</button>
+                    <button onclick="showView('create')" id="nav-create" class="px-4 py-2 rounded-lg hover:text-white transition">Mint</button>
+                    <button onclick="showView('gallery')" id="nav-gallery" class="px-4 py-2 rounded-lg hover:text-white transition">Creations</button>
+                    <button onclick="showView('purchases')" id="nav-purchases" class="px-4 py-2 rounded-lg hover:text-white transition">Purchases</button>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+            <button 
+                id="walletBtn" 
+                type="button"
+                onclick="window.connect()" 
+                class="bg-white text-black text-xs font-bold px-5 py-2 rounded-full hover:bg-neutral-200 transition">
+                Connect Wallet
+            </button>
+            <button 
+                id="disconnectBtn" 
+                type="button"
+                onclick="window.disconnect()" 
+                class="hidden bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white p-2 rounded-full transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M160,216H48a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8H160a8,8,0,0,1,0,16H56V200H160a8,8,0,0,1,0,16Zm85.66-93.66-32-32a8,8,0,0,0-11.32,11.32L212.69,120H112a8,8,0,0,0,0,16H212.69l-10.35,10.34a8,8,0,0,0,11.32,11.32l32-32A8,8,0,0,0,245.66,122.34Z"></path></svg>
+            </button>
+        </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        
+        <section id="landing-view" class="portal-view min-h-[60vh] flex flex-col items-center justify-center text-center">
+            <h1 class="text-6xl font-bold text-white mb-4 tracking-tighter">Manifest Your <span class="text-indigo-500">Vision.</span></h1>
+            <p class="text-neutral-400 max-w-md mb-8">The premier stealth marketplace for generative art and digital artifacts.</p>
+            <div class="flex gap-4">
+                <button onclick="showView('explore')" class="bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-neutral-200 transition">Browse Market</button>
+                <button onclick="connect()" class="border border-neutral-700 px-8 py-3 rounded-full font-bold hover:bg-white/5 transition">Connect</button>
+            </div>
+        </section>
+
+        <section id="explore-view" class="portal-view hidden">
+            <h2 class="text-2xl font-bold text-white mb-8">Marketplace</h2>
+            <div id="exploreGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <section id="create-view" class="portal-view hidden">
+        <div class="max-w-lg mx-auto card-bg p-8 rounded-2xl">
+            <h2 class="text-xl font-bold text-white mb-6">Create New Listing</h2>
+            <div class="space-y-4">
+                <input type="file" id="fileInput" class="w-full bg-neutral-900 border border-neutral-800 p-3 rounded-xl text-sm">
+                
+                <input type="email" id="userEmail" placeholder="Contact Email" class="w-full bg-neutral-900 border border-neutral-800 p-4 rounded-xl outline-none focus:border-indigo-500 transition">
+                <input type="text" id="userInsta" placeholder="Instagram (e.g. @username)" class="w-full bg-neutral-900 border border-neutral-800 p-4 rounded-xl outline-none focus:border-indigo-500 transition">
+                <textarea id="artDescription" placeholder="Describe your asset (license terms, dimensions, etc.)" class="w-full bg-neutral-900 border border-neutral-800 p-4 rounded-xl outline-none focus:border-indigo-500 transition h-32"></textarea>
+                
+                <input type="number" id="artPrice" placeholder="Price (ETH)" class="w-full bg-neutral-900 border border-neutral-800 p-4 rounded-xl outline-none focus:border-indigo-500 transition">
+                <button onclick="window.mintArt()" class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-500 transition">List Asset</button>
+            </div>
+        </div>
+    </section>
+
+        <section id="gallery-view" class="portal-view hidden">
+            <h2 class="text-2xl font-bold text-white mb-8">My Creations</h2>
+            <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <section id="purchases-view" class="portal-view hidden">
+            <h2 class="text-2xl font-bold text-white mb-8">Purchased Assets</h2>
+            <div id="purchasesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

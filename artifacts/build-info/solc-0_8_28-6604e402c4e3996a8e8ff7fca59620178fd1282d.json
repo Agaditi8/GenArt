@@ -1,0 +1,35 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-6604e402c4e3996a8e8ff7fca59620178fd1282d",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/GenArt.sol": "project/contracts/GenArt.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/GenArt.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\ncontract GenArt {\r\n    string public name = \"GenArt Marketplace\";\r\n    uint256 public itemCounter = 0;\r\n\r\n    struct Art {\r\n        uint256 id;\r\n        string metadataURI; // IPFS link\r\n        address payable seller;\r\n        address owner;\r\n        uint256 price;\r\n        bool isSold;\r\n    }\r\n\r\n    mapping(uint256 => Art) public items;\r\n\r\n    event ArtListed(uint256 id, string uri, address seller, uint256 price);\r\n    event ArtSold(uint256 id, address buyer, uint256 price);\r\n\r\n    function listArt(string memory _uri, uint256 _price) public {\r\n        require(_price > 0, \"Price must be positive\");\r\n        itemCounter++;\r\n        items[itemCounter] = Art(itemCounter, _uri, payable(msg.sender), msg.sender, _price, false);\r\n        emit ArtListed(itemCounter, _uri, msg.sender, _price);\r\n    }\r\n\r\n    function buyArt(uint256 _id) public payable {\r\n        Art storage art = items[_id];\r\n        require(msg.value >= art.price, \"Not enough ETH\");\r\n        require(!art.isSold, \"Already sold\");\r\n\r\n        art.isSold = true;\r\n        art.seller.transfer(msg.value);\r\n        art.owner = msg.sender;\r\n\r\n        emit ArtSold(_id, msg.sender, art.price);\r\n    }\r\n}"
+      }
+    }
+  }
+}
